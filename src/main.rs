@@ -1,3 +1,4 @@
+use std::fmt;
 use std::io;
 use std::process;
 
@@ -5,15 +6,53 @@ fn main() {
     TicTacToe::start();
 }
 
+enum UserInput {
+    Quit,
+    Help,
+    Some(usize),
+    None,
+}
+
+enum Player {
+    P1,
+    P2,
+}
+
+impl Player {
+    fn get_mark(&self) -> char {
+        match self {
+            Player::P1 => 'x',
+            Player::P2 => 'o',
+        }
+    }
+
+    fn get_next(&self) -> Player {
+        match self {
+            Player::P1 => Player::P2,
+            Player::P2 => Player::P1,
+        }
+    }
+}
+
+impl fmt::Display for Player {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let output = match self {
+            Player::P1 => 1,
+            Player::P2 => 2,
+        };
+        write!(f, "{}", output)
+    }
+}
+
 struct TicTacToe {
-    player: u8,
+    player: Player,
     grid: [char; 9],
 }
 
 impl TicTacToe {
     fn start() {
         let game: TicTacToe = TicTacToe {
-            player: 1,
+            player: Player::P1,
             grid: [' '; 9],
         };
 
@@ -31,39 +70,44 @@ impl TicTacToe {
 
         loop {
             self.print();
-            let pos: usize = self.get_input();
-            self.set_indice(pos);
-            if self.check_win() {
-                println!("Player {} wins! Play again!", self.player);
-                self.reset();
-                continue;
-            }
-            self.change_player();
+            let input: UserInput = self.get_input();
+            self.execute_input(input);
         }
     }
 
-    fn get_input(&self) -> usize {
-        loop {
-            let mut pos = String::new();
-            println!("Player {} enter your position:", self.player);
-            io::stdin()
-                .read_line(&mut pos)
-                .expect("Failed to read line");
+    fn get_input(&self) -> UserInput {
+        let mut pos = String::new();
+        println!("Player {} enter your position:", self.player);
+        io::stdin()
+            .read_line(&mut pos)
+            .expect("Failed to read line");
 
-            match pos.trim() {
-                "quit" => process::exit(0),
-                "help" => {
-                    TicTacToe::print_help();
-                    continue;
-                }
-                val => match val.parse() {
-                    Ok(num) if num > 0 && num < 10 => break num,
-                    _ => {
-                        println!("The input was not valid");
-                        continue;
-                    }
-                },
-            }
+        match pos.trim() {
+            "quit" => UserInput::Quit,
+            "help" => UserInput::Help,
+            val => match val.parse() {
+                Ok(num) if num > 0 && num < 10 => UserInput::Some(num),
+                _ => UserInput::None,
+            },
+        }
+    }
+
+    fn execute_input(&mut self, input: UserInput) {
+        match input {
+            UserInput::Quit => process::exit(0),
+            UserInput::Help => TicTacToe::print_help(),
+            UserInput::None => println!("The input was not valid"),
+            UserInput::Some(indice) => self.execute_turn(indice),
+        }
+    }
+
+    fn execute_turn(&mut self, indice: usize) {
+        self.set_indice(indice);
+        if self.check_win() {
+            println!("Player {} wins! Play again!", self.player);
+            self.reset();
+        } else {
+            self.change_player();
         }
     }
 
@@ -116,20 +160,19 @@ impl TicTacToe {
     }
 
     fn set_indice(&mut self, indice: usize) {
-        self.grid[indice - 1] = if self.player == 1 { 'x' } else { 'o' };
+        self.grid[indice - 1] = self.player.get_mark();
     }
 
     fn reset(&mut self) {
         self.grid = [' '; 9];
-        self.player = 1;
+        self.player = Player::P1;
     }
 
     fn change_player(&mut self) {
-        self.player = if self.player == 1 { 2 } else { 1 };
+        self.player = self.player.get_next();
     }
 
     fn print_help() {
         println!("Enter 1 - 9 to play, 'help' to print this, and 'quit' to exit");
     }
 }
-
