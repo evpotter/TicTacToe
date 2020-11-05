@@ -1,9 +1,7 @@
 mod board;
 mod input;
 mod player;
-use board::Board;
 use input::Input;
-use std::process;
 
 pub fn play() {
     println!("Welcome to TicTacToe!");
@@ -18,17 +16,16 @@ pub fn play() {
         board.print();
         println!("Player {} enter your position:", board.get_player());
         let input: Input = input::get_input();
-        execute_input(input, &mut board);
-    }
-}
-
-fn execute_input(input: Input, board: &mut Board) {
-    match input {
-        Input::Quit => process::exit(0),
-        Input::Help => print_help(),
-        Input::History => board.show_history(),
-        Input::None => println!("The input was not valid"),
-        Input::Some(indice) => board.execute_input(indice),
+        match input {
+            Input::Quit => {
+                println!("Exiting game");
+                break;
+            }
+            Input::Help => print_help(),
+            Input::History => board.show_history(),
+            Input::None => println!("The input was not valid"),
+            Input::Some(indice) => board.execute_input(indice),
+        }
     }
 }
 
