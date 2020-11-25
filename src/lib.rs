@@ -1,5 +1,6 @@
 mod board;
 mod input;
+
 use input::Input;
 
 pub fn play() {
