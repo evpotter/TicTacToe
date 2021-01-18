@@ -1,5 +1,7 @@
 mod board;
 mod input;
+
+use board::Board;
 use input::Input;
 
 pub fn play() {
@@ -10,7 +12,7 @@ pub fn play() {
     println!("The game can be exited by entering 'quit'");
     println!("A help menu can be shown by entering 'help'");
 
-    let mut board = board::new();
+    let mut board = Board::new();
     loop {
         board.print();
         println!("Player {} enter your position:", board.get_player());

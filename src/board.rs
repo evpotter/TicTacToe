@@ -8,14 +8,14 @@ pub struct Board {
     grid: Grid,
 }
 
-pub fn new() -> Board {
-    Board {
-        player: Player::P1,
-        grid: grid::new(),
-    }
-}
-
 impl Board {
+    pub fn new() -> Board {
+        Board {
+            player: Player::P1,
+            grid: grid::new(),
+        }
+    }
+
     pub fn execute_input(&mut self, indice: usize) {
         match indice {
             _ if self.grid.valid_indice(indice) => self.execute_turn(indice),

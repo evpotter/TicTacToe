@@ -58,15 +58,12 @@ impl Grid {
     }
 
     pub fn print(&self) {
-        print_grid(&self.grid);
+        println!("{}", get_grid_string(&self.grid));
     }
 
     pub fn show_history(&self) {
-        for (turn, grid) in self.history.iter().enumerate() {
-            print_grid(grid);
-            println!("Turn: {}", turn);
-        }
-        println!();
+        let map_func = |(index, grid)| format!("{}\nTurn: {}\n", get_grid_string(grid), index);
+        println!("{}", self.history.iter().enumerate().map(map_func).collect::<Vec<String>>().join(""));
     }
 
     pub fn push_history(&mut self) {
@@ -74,15 +71,14 @@ impl Grid {
     }
 }
 
-fn print_grid(grid: &[char; 9]) {
-    let mut output: String = String::new();
-    for (index, elm) in grid.iter().enumerate() {
-        let tmp = match index {
+fn get_grid_string(grid: &[char; 9]) -> String {
+    let string_func = |(index, elm)| {
+        match index {
             2 | 5 => format!(" {} \n - | - | - \n", elm),
             8 => format!(" {} ", elm),
             _ => format!(" {} |", elm),
-        };
-        output = format!("{}{}", output, tmp);
-    }
-    println!("{}", output);
+        }
+    };
+
+    grid.iter().enumerate().map(string_func).collect::<Vec<String>>().join("")
 }
