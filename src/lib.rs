@@ -3,6 +3,7 @@ mod input;
 
 use board::Board;
 use input::Input;
+use std::io::Write;
 
 pub fn play() {
     println!("Welcome to TicTacToe!");
@@ -15,8 +16,7 @@ pub fn play() {
     let mut board = Board::new();
     loop {
         board.print();
-        println!("Player {} enter your position:", board.get_player());
-        let input: Input = input::get_input();
+        let input: Input = get_player_input(&board);
         match input {
             Input::Quit => {
                 println!("Exiting game");
@@ -30,6 +30,20 @@ pub fn play() {
     }
 }
 
+fn get_player_input(b: &Board) -> Input {
+    print!("Player {} enter your position: ", b.get_player());
+    match std::io::stdout().flush() {
+        Ok(_) => input::get_input(),
+        Err(e) => {
+            println!("Error printing: {}", e);
+            Input::Quit
+        }
+    }
+}
+
 fn print_help() {
-    println!("Enter 1 - 9 to play, 'help' to print this, and 'quit' to exit");
+    println!("1 - 9 to play,");
+    println!("'history' to see the current games turns,");
+    println!("'help' to print this,");
+    println!("'quit' to exit");
 }

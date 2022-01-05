@@ -17,9 +17,10 @@ impl Board {
     }
 
     pub fn execute_input(&mut self, indice: usize) {
-        match indice {
-            _ if self.grid.valid_indice(indice) => self.execute_turn(indice),
-            _ => println!("Incorrect board position provided"),
+        if self.grid.valid_indice(indice) {
+            self.execute_turn(indice)
+        } else {
+            println!("Incorrect board position provided")
         }
     }
 
@@ -31,6 +32,9 @@ impl Board {
         self.grid.set_indice(indice, self.player.get_mark());
         if self.grid.check_win() {
             println!("Player {} wins! Play again!", self.player);
+            self.reset();
+        } else if self.grid.get_turn_count() > 8 {
+            println!("Game was a draw! Play again!");
             self.reset();
         } else {
             self.grid.push_history();

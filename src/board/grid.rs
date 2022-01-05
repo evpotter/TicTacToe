@@ -51,10 +51,7 @@ impl Grid {
     }
 
     pub fn valid_indice(&self, indice: usize) -> bool {
-        match indice {
-            _ if indice > 0 && indice < 10 && self.grid[indice - 1] == ' ' => true,
-            _ => false,
-        }
+        indice > 0 && indice < 10 && self.grid[indice - 1] == ' '
     }
 
     pub fn print(&self) {
@@ -63,22 +60,36 @@ impl Grid {
 
     pub fn show_history(&self) {
         let map_func = |(index, grid)| format!("{}\nTurn: {}\n", get_grid_string(grid), index);
-        println!("{}", self.history.iter().enumerate().map(map_func).collect::<Vec<String>>().join(""));
+        println!(
+            "{}",
+            self.history
+                .iter()
+                .enumerate()
+                .map(map_func)
+                .collect::<Vec<String>>()
+                .join("")
+        );
     }
 
     pub fn push_history(&mut self) {
         self.history.push(self.grid);
     }
+
+    pub fn get_turn_count(&self) -> usize {
+        self.history.len()
+    }
 }
 
 fn get_grid_string(grid: &[char; 9]) -> String {
-    let string_func = |(index, elm)| {
-        match index {
-            2 | 5 => format!(" {} \n - | - | - \n", elm),
-            8 => format!(" {} ", elm),
-            _ => format!(" {} |", elm),
-        }
+    let string_func = |(index, elm)| match index {
+        2 | 5 => format!(" {} \n – | – | – \n", elm),
+        8 => format!(" {} ", elm),
+        _ => format!(" {} |", elm),
     };
 
-    grid.iter().enumerate().map(string_func).collect::<Vec<String>>().join("")
+    grid.iter()
+        .enumerate()
+        .map(string_func)
+        .collect::<Vec<String>>()
+        .join("")
 }
