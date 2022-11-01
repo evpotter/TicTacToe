@@ -54,21 +54,18 @@ impl Grid {
         indice > 0 && indice < 10 && self.grid[indice - 1] == ' '
     }
 
-    pub fn print(&self) {
-        println!("{}", get_grid_string(&self.grid));
+    pub fn print(&self) -> String {
+        get_grid_string(&self.grid)
     }
 
-    pub fn show_history(&self) {
+    pub fn show_history(&self) -> String {
         let map_func = |(index, grid)| format!("{}\nTurn: {}\n", get_grid_string(grid), index);
-        println!(
-            "{}",
-            self.history
-                .iter()
-                .enumerate()
-                .map(map_func)
-                .collect::<Vec<String>>()
-                .join("")
-        );
+        self.history
+            .iter()
+            .enumerate()
+            .map(map_func)
+            .collect::<Vec<String>>()
+            .join("")
     }
 
     pub fn push_history(&mut self) {

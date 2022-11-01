@@ -16,11 +16,11 @@ impl Board {
         }
     }
 
-    pub fn execute_input(&mut self, indice: usize) {
+    pub fn execute_input(&mut self, indice: usize) -> Option<String> {
         if self.grid.valid_indice(indice) {
             self.execute_turn(indice)
         } else {
-            println!("Incorrect board position provided")
+            Some(String::from("Incorrect board position provided"))
         }
     }
 
@@ -28,17 +28,20 @@ impl Board {
         &self.player
     }
 
-    fn execute_turn(&mut self, indice: usize) {
+    fn execute_turn(&mut self, indice: usize) -> Option<String> {
         self.grid.set_indice(indice, self.player.get_mark());
         if self.grid.check_win() {
-            println!("Player {} wins! Play again!", self.player);
+            let s = format!("Player {} wins! Play again!", self.player);
             self.reset();
+            Some(s)
         } else if self.grid.get_turn_count() > 8 {
-            println!("Game was a draw! Play again!");
+            let s = String::from("Game was a draw! Play again!");
             self.reset();
+            Some(s)
         } else {
             self.grid.push_history();
             self.change_player();
+            None
         }
     }
 
@@ -51,11 +54,11 @@ impl Board {
         self.player = self.player.get_next();
     }
 
-    pub fn print(&self) {
+    pub fn print(&self) -> String {
         self.grid.print()
     }
 
-    pub fn show_history(&self) {
+    pub fn show_history(&self) -> String {
         self.grid.show_history()
     }
 }

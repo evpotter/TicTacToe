@@ -1,3 +1,3 @@
 fn main() {
-    tictactoe::play();
+    tictactoe::play().unwrap();
 }
